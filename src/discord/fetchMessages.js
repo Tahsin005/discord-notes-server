@@ -28,17 +28,47 @@ const fetchAllMessages = async (channelId) => {
 };
 
 /**
- * Parses a message content as JSON.
+ * Parses a message content and extracts attachments.
  * @param {object} message Discord message object
- * @returns {object|null} Parsed JSON or null if invalid
+ * @returns {object|null} Parsed content with attachments or null if invalid
  */
 const parseMessage = (message) => {
+    const result = {
+        content: null,
+        attachments: [],
+        timestamp: message.createdTimestamp,
+        messageId: message.id
+    };
+
+    // Try to parse content as JSON, fallback to plain text
     try {
-        return JSON.parse(message.content);
+        result.content = JSON.parse(message.content);
     } catch (e) {
-        // Silently ignore non-JSON messages unless it's critical
+        // If not JSON, keep as plain text (useful for blog posts)
+        result.content = message.content || null;
+    }
+
+    // Extract attachments (images, files, etc.)
+    if (message.attachments && message.attachments.size > 0) {
+        message.attachments.forEach(attachment => {
+            result.attachments.push({
+                url: attachment.url,
+                proxyURL: attachment.proxyURL,
+                name: attachment.name,
+                size: attachment.size,
+                contentType: attachment.contentType,
+                width: attachment.width,
+                height: attachment.height
+            });
+        });
+    }
+
+    // Return null if no content and no attachments
+    if (!result.content && result.attachments.length === 0) {
         return null;
     }
+
+    return result;
 };
 
 module.exports = {

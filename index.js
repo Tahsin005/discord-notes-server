@@ -5,9 +5,7 @@ const dotenv = require('dotenv');
 const { login } = require('./src/discord/client');
 
 // Routes
-const habitRoutes = require('./src/routes/habits');
-const taskRoutes = require('./src/routes/tasks');
-const dailyRoutes = require('./src/routes/daily');
+const blogRoutes = require('./src/routes/blogs');
 
 dotenv.config();
 
@@ -28,9 +26,7 @@ app.get('/state', async (req, res) => {
 });
 
 // Register Routes
-app.use('/habits', habitRoutes);
-app.use('/tasks', taskRoutes);
-app.use('/daily', dailyRoutes);
+app.use('/posts', blogRoutes);
 
 // System Log / Error Handling (middleware-ish)
 app.use((err, req, res, next) => {
