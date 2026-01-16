@@ -13,6 +13,11 @@ const app = express();
 app.use(cors());
 app.use(bodyParser.json());
 
+// Health Check Endpoint
+app.get('/health', (req, res) => {
+    res.json({ status: 'ok', timestamp: new Date().toISOString() });
+});
+
 // Main State Endpoint (for debugging or heavy builds)
 const { getProjection } = require('./src/projections/state');
 app.get('/state', async (req, res) => {
